@@ -2,7 +2,7 @@ package certinfo
 
 import (
 	"bytes"
-	"crypto/dsa" //nolint:staticcheck // used to inspect key
+	"crypto/dsa"
 	"crypto/ecdsa"
 	"crypto/ed25519"
 	"crypto/rsa"

@@ -5,7 +5,7 @@ go 1.21.0
 require (
 	github.com/google/certificate-transparency-go v1.2.1
 	github.com/google/go-cmp v0.6.0
-	golang.org/x/crypto v0.26.0
+	golang.org/x/crypto v0.27.0
 )
 
 require (
