@@ -42,6 +42,7 @@ var (
 	oidStepProvisioner                = asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 37476, 9000, 64, 1}
 	oidStepCertificateAuthority       = asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 37476, 9000, 64, 2}
 	oidStepManagedEndpoint            = asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 37476, 9000, 64, 3}
+	oidStepManagedDevice              = asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 37476, 9000, 64, 4}
 	oidSignedCertificateTimestampList = asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 11129, 2, 4, 2}
 	oidPermanentIdentifier            = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 8, 3}
 	oidHardwareModuleName             = asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 8, 4}
@@ -115,6 +116,10 @@ type stepCertificateAuthority struct {
 type stepManagedEndpoint struct {
 	Kind       int
 	EndpointID string
+}
+
+type stepManagedDevice struct {
+	DeviceID string
 }
 
 // RFC 5280 - https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6
@@ -1082,6 +1087,20 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 
 				fmt.Fprintf(buf, "%16sKind: %s\n", "", kind)
 				fmt.Fprintf(buf, "%16sEndpointID: %s\n", "", val.EndpointID)
+			case ext.Id.Equal(oidStepManagedDevice):
+				fmt.Fprintf(buf, "%12sX509v3 Step Managed Device:", "")
+				if ext.Critical {
+					fmt.Fprint(buf, " critical\n")
+				} else {
+					fmt.Fprint(buf, "\n")
+				}
+				val := &stepManagedDevice{}
+				rest, err := asn1.Unmarshal(ext.Value, val)
+				if err != nil || len(rest) > 0 {
+					return "", fmt.Errorf("certinfo: Error parsing OID %q", ext.Id.String())
+				}
+
+				fmt.Fprintf(buf, "%16sDeviceID: %s\n", "", val.DeviceID)
 			case ext.Id.Equal(oidSignedCertificateTimestampList):
 				fmt.Fprintf(buf, "%12sRFC6962 Certificate Transparency SCT:", "")
 				if ext.Critical {
