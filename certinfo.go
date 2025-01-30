@@ -30,6 +30,7 @@ import (
 const (
 	validityTimeFormat = "Jan 2 15:04:05 2006 MST"
 	sctTimeFormat      = "Jan 2 15:04:05.000 2006 MST"
+	unknown            = "Unknown"
 )
 
 // Extra ASN1 OIDs that we may need to handle
@@ -246,6 +247,31 @@ type tbsCertificate struct {
 	Extensions         []pkix.Extension `asn1:"optional,explicit,tag:3"`
 }
 
+// certificate allows unmarshaling a full X.509 certificate.
+type certificate struct {
+	TBSCertificate     tbsCertificate
+	SignatureAlgorithm pkix.AlgorithmIdentifier
+	SignatureValue     asn1.BitString
+}
+
+// tbsCertificateRequest allows unmarshaling the "To-Be-Signed" principle
+// portion of the X.509 certificate requests.
+type tbsCertificateRequest struct {
+	Raw           asn1.RawContent
+	Version       int
+	Subject       asn1.RawValue
+	PublicKey     publicKeyInfo
+	RawAttributes []asn1.RawValue `asn1:"tag:0"`
+}
+
+// certificateRequest allows unmarshaling a full X.509 certificate request.
+type certificateRequest struct {
+	Raw                asn1.RawContent
+	TBSCSR             tbsCertificateRequest
+	SignatureAlgorithm pkix.AlgorithmIdentifier
+	SignatureValue     asn1.BitString
+}
+
 // certUniqueIDs extracts the subject and issuer unique IDs which are
 // byte strings. These are not common but may be present in x509v2 certificates
 // or later under tags 1 and 2 (before x509v3 extensions).
@@ -336,7 +362,7 @@ func printVersion(version int, buf *bytes.Buffer) {
 	fmt.Fprintf(buf, "%8sVersion: %d (%#x)\n", "", version, hexVersion)
 }
 
-func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk interface{}, buf *bytes.Buffer) error {
+func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk, certOrCSR any, buf *bytes.Buffer) error {
 	fmt.Fprintf(buf, "%8sSubject:", "")
 	if len(subj.Names) > 0 {
 		fmt.Fprint(buf, " ")
@@ -406,7 +432,7 @@ func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk
 			return errors.New("certinfo: Expected ed25519.PublicKey for type x509.ED25519")
 		}
 	default:
-		return errors.New("certinfo: Unknown public key type")
+		printUnknownPublicKeyAlgorithm(certOrCSR, buf)
 	}
 	return nil
 }
@@ -575,7 +601,7 @@ func printSubjAltNames(ext pkix.Extension, dnsNames, emailAddresses []string, ip
 	})
 }
 
-func printSignature(sigAlgo x509.SignatureAlgorithm, sig []byte, buf *bytes.Buffer) {
+func printSignature(sigAlgo string, sig []byte, buf *bytes.Buffer) {
 	fmt.Fprintf(buf, "%4sSignature Algorithm: %s", "", sigAlgo)
 	for i, val := range sig {
 		if (i % 18) == 0 {
@@ -587,6 +613,72 @@ func printSignature(sigAlgo x509.SignatureAlgorithm, sig []byte, buf *bytes.Buff
 		}
 	}
 	fmt.Fprint(buf, "\n")
+}
+
+func printUnknownSignature(cert *x509.Certificate, buf *bytes.Buffer) {
+	var crt certificate
+	if rest, err := asn1.Unmarshal(cert.Raw, &crt); err != nil || len(rest) > 0 {
+		printSignature(unknown, cert.Signature, buf)
+		return
+	}
+
+	printSignature(crt.SignatureAlgorithm.Algorithm.String(), cert.Signature, buf)
+}
+
+func printUnknownSignatureFromRequest(csr *x509.CertificateRequest, buf *bytes.Buffer) {
+	var cr certificateRequest
+	if rest, err := asn1.Unmarshal(csr.Raw, &cr); err != nil || len(rest) > 0 {
+		printSignature(unknown, csr.Signature, buf)
+		return
+	}
+
+	printSignature(cr.SignatureAlgorithm.Algorithm.String(), csr.Signature, buf)
+}
+
+func printUnknownPublicKeyAlgorithm(certOrCSR any, buf *bytes.Buffer) {
+	switch c := certOrCSR.(type) {
+	case *x509.Certificate:
+		var crt certificate
+		if rest, err := asn1.Unmarshal(c.Raw, &crt); err != nil || len(rest) > 0 {
+			break
+		}
+		fmt.Fprintln(buf, crt.TBSCertificate.PublicKey.Algorithm.Algorithm.String())
+		fmt.Fprintf(buf, "%16sPublic-Key:\n", "")
+		fmt.Fprintf(buf, "%16sRaw Bytes:", "")
+		bs := crt.TBSCertificate.PublicKey.PublicKey.Bytes
+		for i, val := range bs {
+			if (i % 15) == 0 {
+				fmt.Fprintf(buf, "\n%20s", "")
+			}
+			fmt.Fprintf(buf, "%02x", val)
+			if i != len(bs)-1 {
+				fmt.Fprint(buf, ":")
+			}
+		}
+		fmt.Fprint(buf, "\n")
+		return
+	case *x509.CertificateRequest:
+		var cr certificateRequest
+		if rest, err := asn1.Unmarshal(c.Raw, &cr); err != nil || len(rest) > 0 {
+			break
+		}
+		fmt.Fprintln(buf, cr.TBSCSR.PublicKey.Algorithm.Algorithm)
+		fmt.Fprintf(buf, "%16sRaw Bytes:", "")
+		bs := cr.TBSCSR.PublicKey.PublicKey.Bytes
+		for i, val := range bs {
+			if (i % 15) == 0 {
+				fmt.Fprintf(buf, "\n%20s", "")
+			}
+			fmt.Fprintf(buf, "%02x", val)
+			if i != len(bs)-1 {
+				fmt.Fprint(buf, ":")
+			}
+		}
+		fmt.Fprint(buf, "\n")
+		return
+	}
+
+	fmt.Fprintln(buf, unknown)
 }
 
 func toBase64(b []byte) string {
@@ -667,7 +759,7 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 	fmt.Fprintf(buf, "%12sNot After : %s\n", "", cert.NotAfter.Format(validityTimeFormat))
 
 	// Subject information
-	err := printSubjectInformation(&cert.Subject, cert.PublicKeyAlgorithm, cert.PublicKey, buf)
+	err := printSubjectInformation(&cert.Subject, cert.PublicKeyAlgorithm, cert.PublicKey, cert, buf)
 	if err != nil {
 		return "", err
 	}
@@ -1199,7 +1291,11 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 	}
 
 	// Signature
-	printSignature(cert.SignatureAlgorithm, cert.Signature, buf)
+	if cert.SignatureAlgorithm != x509.UnknownSignatureAlgorithm {
+		printSignature(cert.SignatureAlgorithm.String(), cert.Signature, buf)
+	} else {
+		printUnknownSignature(cert, buf)
+	}
 
 	// Optional: Print the full PEM certificate
 	/*
@@ -1296,7 +1392,7 @@ func CertificateRequestText(csr *x509.CertificateRequest) (string, error) {
 	printVersion(csr.Version, buf)
 
 	// Subject information
-	err := printSubjectInformation(&csr.Subject, csr.PublicKeyAlgorithm, csr.PublicKey, buf)
+	err := printSubjectInformation(&csr.Subject, csr.PublicKeyAlgorithm, csr.PublicKey, csr, buf)
 	if err != nil {
 		return "", err
 	}
@@ -1525,7 +1621,11 @@ func CertificateRequestText(csr *x509.CertificateRequest) (string, error) {
 	}
 
 	// Signature
-	printSignature(csr.SignatureAlgorithm, csr.Signature, buf)
+	if csr.SignatureAlgorithm != x509.UnknownSignatureAlgorithm {
+		printSignature(csr.SignatureAlgorithm.String(), csr.Signature, buf)
+	} else {
+		printUnknownSignatureFromRequest(csr, buf)
+	}
 
 	return buf.String(), nil
 }
