@@ -300,7 +300,7 @@ type certificate struct {
 }
 
 // tbsCertificateRequest allows unmarshaling the "To-Be-Signed" principle
-// portion of the X.509 certificate requests.
+// portion of an X.509 certificate request.
 type tbsCertificateRequest struct {
 	Raw           asn1.RawContent
 	Version       int
