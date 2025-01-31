@@ -54,9 +54,16 @@ func newCertificateShort(cert *x509.Certificate) *certificateShort {
 		typ = "TLS"
 	}
 
+	var publicKeyAlgorithm string
+	if cert.PublicKeyAlgorithm != x509.UnknownPublicKeyAlgorithm {
+		publicKeyAlgorithm = getPublicKeyAlgorithm(cert.PublicKeyAlgorithm, cert.PublicKey)
+	} else {
+		publicKeyAlgorithm = getCertificatePublicKeyAlgorithmName(cert)
+	}
+
 	return &certificateShort{
 		Type:               typ,
-		PublicKeyAlgorithm: getPublicKeyAlgorithm(cert.PublicKeyAlgorithm, cert.PublicKey),
+		PublicKeyAlgorithm: publicKeyAlgorithm,
 		SerialNumber:       abbreviated(cert.SerialNumber.String()),
 		Subject:            cert.Subject.CommonName,
 		Issuer:             cert.Issuer.CommonName,
@@ -106,8 +113,15 @@ type certificateRequestShort struct {
 }
 
 func newCertificateRequestShort(cr *x509.CertificateRequest) *certificateRequestShort {
+	var publicKeyAlgorithm string
+	if cr.PublicKeyAlgorithm != x509.UnknownPublicKeyAlgorithm {
+		publicKeyAlgorithm = getPublicKeyAlgorithm(cr.PublicKeyAlgorithm, cr.PublicKey)
+	} else {
+		publicKeyAlgorithm = getCertificateRequestPublicKeyAlgorithmName(cr)
+	}
+
 	return &certificateRequestShort{
-		PublicKeyAlgorithm: getPublicKeyAlgorithm(cr.PublicKeyAlgorithm, cr.PublicKey),
+		PublicKeyAlgorithm: publicKeyAlgorithm,
 		Subject:            cr.Subject.CommonName,
 		SANs:               getSANs(cr.Subject.CommonName, cr.DNSNames, cr.IPAddresses, cr.EmailAddresses, cr.URIs),
 	}

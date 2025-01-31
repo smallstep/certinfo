@@ -745,6 +745,30 @@ func getCertificateRequestSignatureAlgorithmName(csr *x509.CertificateRequest) s
 	return getUnknownAlgorithmName(cr.SignatureAlgorithm.Algorithm)
 }
 
+func getCertificatePublicKeyAlgorithmName(cert *x509.Certificate) string {
+	if cert.PublicKeyAlgorithm != x509.UnknownPublicKeyAlgorithm {
+		return cert.PublicKeyAlgorithm.String()
+	}
+
+	var crt certificate
+	if rest, err := asn1.Unmarshal(cert.Raw, &crt); err != nil || len(rest) > 0 {
+		return unknown
+	}
+	return getUnknownAlgorithmName(crt.TBSCertificate.PublicKey.Algorithm.Algorithm)
+}
+
+func getCertificateRequestPublicKeyAlgorithmName(csr *x509.CertificateRequest) string {
+	if csr.PublicKeyAlgorithm != x509.UnknownPublicKeyAlgorithm {
+		return csr.PublicKeyAlgorithm.String()
+	}
+
+	var cr certificateRequest
+	if rest, err := asn1.Unmarshal(csr.Raw, &cr); err != nil || len(rest) > 0 {
+		return unknown
+	}
+	return getUnknownAlgorithmName(cr.TBSCSR.PublicKey.Algorithm.Algorithm)
+}
+
 func printCertificateSignature(cert *x509.Certificate, sig []byte, buf *bytes.Buffer) {
 	fmt.Fprintf(buf, "%4sSignature Algorithm: %s", "", getCertificateSignatureAlgorithmName(cert))
 	for i, val := range sig {
