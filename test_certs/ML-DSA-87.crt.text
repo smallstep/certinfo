@@ -2,14 +2,14 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number: 123456789012345678901234567890123456789012345678 (0x159ffe6f22fd5cc42c524df6fd5e28d0de38f34e)
-    Signature Algorithm: 0
+    Signature Algorithm: ML-DSA-87
         Issuer: O=IETF,CN=LAMPS WG
         Validity
             Not Before: Feb 3 04:32:10 2020 UTC
             Not After : Jan 29 04:32:10 2040 UTC
         Subject: O=IETF,CN=LAMPS WG
         Subject Public Key Info:
-            Public Key Algorithm: 2.16.840.1.101.3.4.3.19
+            Public Key Algorithm: ML-DSA-87
                 Public-Key:
                 Raw Bytes:
                     97:92:bc:ec:2f:24:30:68:6a:82:fc:cf:3c:2f:5f:
@@ -192,7 +192,7 @@ Certificate:
                 CA:TRUE
             X509v3 Subject Key Identifier:
                 89:88:67:50:B5:7C:24:DB:3F:C0:12:E6:1E:DE:59:75:33:37:37:4F
-    Signature Algorithm: 2.16.840.1.101.3.4.3.19
+    Signature Algorithm: ML-DSA-87
          08:78:3d:56:5e:fc:7b:97:44:0f:8b:d9:81:8b:46:6b:e5:38:
          db:cc:ed:b1:36:44:7d:27:a7:78:dc:9f:7c:7c:f3:2d:14:75:
          5b:30:f1:30:84:98:d9:8b:3a:ce:3e:67:9d:7f:13:58:8f:15:
