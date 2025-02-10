@@ -30,6 +30,7 @@ import (
 const (
 	validityTimeFormat = "Jan 2 15:04:05 2006 MST"
 	sctTimeFormat      = "Jan 2 15:04:05.000 2006 MST"
+	unknown            = "Unknown"
 )
 
 // Extra ASN1 OIDs that we may need to handle
@@ -67,6 +68,51 @@ var (
 	oidTPMModel         = asn1.ObjectIdentifier{2, 23, 133, 2, 2}
 	oidTPMVersion       = asn1.ObjectIdentifier{2, 23, 133, 2, 3}
 	oidTPMSpecification = asn1.ObjectIdentifier{2, 23, 133, 2, 16}
+)
+
+// Module-Lattice-Based Digital Signature Standard
+// https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf
+// https://csrc.nist.gov/projects/computer-security-objects-register/algorithm-registration
+// https://www.ietf.org/id/draft-ietf-lamps-pq-composite-sigs-03.html
+var (
+	oidMLDSA44     = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 17} // ML-DSA-44
+	oidMLDSA65     = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 18} // ML-DSA-65
+	oidMLDSA87     = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 19} // ML-DSA-87
+	oidHashMLDSA44 = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 32} // HASH-ML-DSA-44
+	oidHashMLDSA65 = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 33} // HASH-ML-DSA-65
+	oidHashMLDSA87 = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 34} // HASH-ML-DSA-87
+)
+
+// Stateless Hash-Based Digital Signature Standard
+// https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf
+// https://csrc.nist.gov/projects/computer-security-objects-register/algorithm-registration
+// https://www.ietf.org/id/draft-ietf-lamps-x509-slhdsa-03.html
+var (
+	oidSLHDSASHA2128s  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 20} // SLH-DSA-SHA2-128s
+	oidSLHDSASHA2128f  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 21} // SLH-DSA-SHA2-128f
+	oidSLHDSASHA2192s  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 22} // SLH-DSA-SHA2-192s
+	oidSLHDSASHA2192f  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 23} // SLH-DSA-SHA2-192f
+	oidSLHDSASHA2256s  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 24} // SLH-DSA-SHA2-256s
+	oidSLHDSASHA2256f  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 25} // SLH-DSA-SHA2-256f
+	oidSLHDSASHAKE128s = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 26} // SLH-DSA-SHAKE-128s
+	oidSLHDSASHAKE128f = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 27} // SLH-DSA-SHAKE-128f
+	oidSLHDSASHAKE192s = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 28} // SLH-DSA-SHAKE-192s
+	oidSLHDSASHAKE192f = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 29} // SLH-DSA-SHAKE-192f
+	oidSLHDSASHAKE256s = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 30} // SLH-DSA-SHAKE-256s
+	oidSLHDSASHAKE256f = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 31} // SLH-DSA-SHAKE-256f
+
+	oidHashSLHDSASHA2128s  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 35} // HASH-SLH-DSA-SHA2-128s
+	oidHashSLHDSASHA2128f  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 36} // HASH-SLH-DSA-SHA2-128f
+	oidHashSLHDSASHA2192s  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 37} // HASH-SLH-DSA-SHA2-192s
+	oidHashSLHDSASHA2192f  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 38} // HASH-SLH-DSA-SHA2-192f
+	oidHashSLHDSASHA2256s  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 39} // HASH-SLH-DSA-SHA2-256s
+	oidHashSLHDSASHA2256f  = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 40} // HASH-SLH-DSA-SHA2-256f
+	oidHashSLHDSASHAKE128s = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 41} // HASH-SLH-DSA-SHAKE-128s
+	oidHashSLHDSASHAKE128f = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 42} // HASH-SLH-DSA-SHAKE-128f
+	oidHashSLHDSASHAKE192s = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 43} // HASH-SLH-DSA-SHAKE-192s
+	oidHashSLHDSASHAKE192f = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 44} // HASH-SLH-DSA-SHAKE-192f
+	oidHashSLHDSASHAKE256s = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 45} // HASH-SLH-DSA-SHAKE-256s
+	oidHashSLHDSASHAKE256f = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 46} // HASH-SLH-DSA-SHAKE-256f
 )
 
 // stepProvisionerType are string representation of the provisioner type (int)
@@ -246,6 +292,31 @@ type tbsCertificate struct {
 	Extensions         []pkix.Extension `asn1:"optional,explicit,tag:3"`
 }
 
+// certificate allows unmarshaling a full X.509 certificate.
+type certificate struct {
+	TBSCertificate     tbsCertificate
+	SignatureAlgorithm pkix.AlgorithmIdentifier
+	SignatureValue     asn1.BitString
+}
+
+// tbsCertificateRequest allows unmarshaling the "To-Be-Signed" principle
+// portion of an X.509 certificate request.
+type tbsCertificateRequest struct {
+	Raw           asn1.RawContent
+	Version       int
+	Subject       asn1.RawValue
+	PublicKey     publicKeyInfo
+	RawAttributes []asn1.RawValue `asn1:"tag:0"`
+}
+
+// certificateRequest allows unmarshaling a full X.509 certificate request.
+type certificateRequest struct {
+	Raw                asn1.RawContent
+	TBSCSR             tbsCertificateRequest
+	SignatureAlgorithm pkix.AlgorithmIdentifier
+	SignatureValue     asn1.BitString
+}
+
 // certUniqueIDs extracts the subject and issuer unique IDs which are
 // byte strings. These are not common but may be present in x509v2 certificates
 // or later under tags 1 and 2 (before x509v3 extensions).
@@ -336,7 +407,7 @@ func printVersion(version int, buf *bytes.Buffer) {
 	fmt.Fprintf(buf, "%8sVersion: %d (%#x)\n", "", version, hexVersion)
 }
 
-func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk interface{}, buf *bytes.Buffer) error {
+func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk, certOrCSR any, buf *bytes.Buffer) error {
 	fmt.Fprintf(buf, "%8sSubject:", "")
 	if len(subj.Names) > 0 {
 		fmt.Fprint(buf, " ")
@@ -406,7 +477,7 @@ func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk
 			return errors.New("certinfo: Expected ed25519.PublicKey for type x509.ED25519")
 		}
 	default:
-		return errors.New("certinfo: Unknown public key type")
+		printUnknownPublicKeyAlgorithm(certOrCSR, buf)
 	}
 	return nil
 }
@@ -575,8 +646,131 @@ func printSubjAltNames(ext pkix.Extension, dnsNames, emailAddresses []string, ip
 	})
 }
 
-func printSignature(sigAlgo x509.SignatureAlgorithm, sig []byte, buf *bytes.Buffer) {
-	fmt.Fprintf(buf, "%4sSignature Algorithm: %s", "", sigAlgo)
+func getUnknownAlgorithmName(oid asn1.ObjectIdentifier) string {
+	switch {
+	// ML-DSA
+	case oid.Equal(oidMLDSA44):
+		return "ML-DSA-44"
+	case oid.Equal(oidMLDSA65):
+		return "ML-DSA-65"
+	case oid.Equal(oidMLDSA87):
+		return "ML-DSA-87"
+
+	// Pre-hash ML-DSA
+	case oid.Equal(oidHashMLDSA44):
+		return "HashML-DSA-44"
+	case oid.Equal(oidHashMLDSA65):
+		return "HashML-DSA-65"
+	case oid.Equal(oidHashMLDSA87):
+		return "HashML-DSA-87"
+
+	// SLH-DSA
+	case oid.Equal(oidSLHDSASHA2128s):
+		return "SLH-DSA-SHA2-128s"
+	case oid.Equal(oidSLHDSASHA2128f):
+		return "SLH-DSA-SHA2-128f"
+	case oid.Equal(oidSLHDSASHA2192s):
+		return "SLH-DSA-SHA2-192s"
+	case oid.Equal(oidSLHDSASHA2192f):
+		return "SLH-DSA-SHA2-192f"
+	case oid.Equal(oidSLHDSASHA2256s):
+		return "SLH-DSA-SHA2-256s"
+	case oid.Equal(oidSLHDSASHA2256f):
+		return "SLH-DSA-SHA2-256f"
+	case oid.Equal(oidSLHDSASHAKE128s):
+		return "SLH-DSA-SHAKE-128s"
+	case oid.Equal(oidSLHDSASHAKE128f):
+		return "SLH-DSA-SHAKE-128f"
+	case oid.Equal(oidSLHDSASHAKE192s):
+		return "SLH-DSA-SHAKE-192s"
+	case oid.Equal(oidSLHDSASHAKE192f):
+		return "SLH-DSA-SHAKE-192f"
+	case oid.Equal(oidSLHDSASHAKE256s):
+		return "SLH-DSA-SHAKE-256s"
+	case oid.Equal(oidSLHDSASHAKE256f):
+		return "SLH-DSA-SHAKE-256f"
+
+	// Pre-hash SLH-DSA
+	case oid.Equal(oidHashSLHDSASHA2128s):
+		return "HashSLH-DSA-SHA2-128s"
+	case oid.Equal(oidHashSLHDSASHA2128f):
+		return "HashSLH-DSA-SHA2-128f"
+	case oid.Equal(oidHashSLHDSASHA2192s):
+		return "HashSLH-DSA-SHA2-192s"
+	case oid.Equal(oidHashSLHDSASHA2192f):
+		return "HashSLH-DSA-SHA2-192f"
+	case oid.Equal(oidHashSLHDSASHA2256s):
+		return "HashSLH-DSA-SHA2-256s"
+	case oid.Equal(oidHashSLHDSASHA2256f):
+		return "HashSLH-DSA-SHA2-256f"
+	case oid.Equal(oidHashSLHDSASHAKE128s):
+		return "HashSLH-DSA-SHAKE-128s"
+	case oid.Equal(oidHashSLHDSASHAKE128f):
+		return "HashSLH-DSA-SHAKE-128f"
+	case oid.Equal(oidHashSLHDSASHAKE192s):
+		return "HashSLH-DSA-SHAKE-192s"
+	case oid.Equal(oidHashSLHDSASHAKE192f):
+		return "HashSLH-DSA-SHAKE-192f"
+	case oid.Equal(oidHashSLHDSASHAKE256s):
+		return "HashSLH-DSA-SHAKE-256s"
+	case oid.Equal(oidHashSLHDSASHAKE256f):
+		return "HashSLH-DSA-SHAKE-256f"
+
+	default:
+		return oid.String()
+	}
+}
+
+func getCertificateSignatureAlgorithmName(cert *x509.Certificate) string {
+	if cert.SignatureAlgorithm != x509.UnknownSignatureAlgorithm {
+		return cert.SignatureAlgorithm.String()
+	}
+
+	var crt certificate
+	if rest, err := asn1.Unmarshal(cert.Raw, &crt); err != nil || len(rest) > 0 {
+		return unknown
+	}
+	return getUnknownAlgorithmName(crt.SignatureAlgorithm.Algorithm)
+}
+
+func getCertificateRequestSignatureAlgorithmName(csr *x509.CertificateRequest) string {
+	if csr.SignatureAlgorithm != x509.UnknownSignatureAlgorithm {
+		return csr.SignatureAlgorithm.String()
+	}
+
+	var cr certificateRequest
+	if rest, err := asn1.Unmarshal(csr.Raw, &cr); err != nil || len(rest) > 0 {
+		return unknown
+	}
+	return getUnknownAlgorithmName(cr.SignatureAlgorithm.Algorithm)
+}
+
+func getCertificatePublicKeyAlgorithmName(cert *x509.Certificate) string {
+	if cert.PublicKeyAlgorithm != x509.UnknownPublicKeyAlgorithm {
+		return cert.PublicKeyAlgorithm.String()
+	}
+
+	var crt certificate
+	if rest, err := asn1.Unmarshal(cert.Raw, &crt); err != nil || len(rest) > 0 {
+		return unknown
+	}
+	return getUnknownAlgorithmName(crt.TBSCertificate.PublicKey.Algorithm.Algorithm)
+}
+
+func getCertificateRequestPublicKeyAlgorithmName(csr *x509.CertificateRequest) string {
+	if csr.PublicKeyAlgorithm != x509.UnknownPublicKeyAlgorithm {
+		return csr.PublicKeyAlgorithm.String()
+	}
+
+	var cr certificateRequest
+	if rest, err := asn1.Unmarshal(csr.Raw, &cr); err != nil || len(rest) > 0 {
+		return unknown
+	}
+	return getUnknownAlgorithmName(cr.TBSCSR.PublicKey.Algorithm.Algorithm)
+}
+
+func printCertificateSignature(cert *x509.Certificate, sig []byte, buf *bytes.Buffer) {
+	fmt.Fprintf(buf, "%4sSignature Algorithm: %s", "", getCertificateSignatureAlgorithmName(cert))
 	for i, val := range sig {
 		if (i % 18) == 0 {
 			fmt.Fprintf(buf, "\n%9s", "")
@@ -587,6 +781,66 @@ func printSignature(sigAlgo x509.SignatureAlgorithm, sig []byte, buf *bytes.Buff
 		}
 	}
 	fmt.Fprint(buf, "\n")
+}
+
+func printCertificateRequestSignature(csr *x509.CertificateRequest, sig []byte, buf *bytes.Buffer) {
+	fmt.Fprintf(buf, "%4sSignature Algorithm: %s", "", getCertificateRequestSignatureAlgorithmName(csr))
+	for i, val := range sig {
+		if (i % 18) == 0 {
+			fmt.Fprintf(buf, "\n%9s", "")
+		}
+		fmt.Fprintf(buf, "%02x", val)
+		if i != len(sig)-1 {
+			fmt.Fprint(buf, ":")
+		}
+	}
+	fmt.Fprint(buf, "\n")
+}
+
+func printUnknownPublicKeyAlgorithm(certOrCSR any, buf *bytes.Buffer) {
+	switch c := certOrCSR.(type) {
+	case *x509.Certificate:
+		var crt certificate
+		if rest, err := asn1.Unmarshal(c.Raw, &crt); err != nil || len(rest) > 0 {
+			break
+		}
+		fmt.Fprintln(buf, getUnknownAlgorithmName(crt.TBSCertificate.PublicKey.Algorithm.Algorithm))
+		fmt.Fprintf(buf, "%16sPublic-Key:\n", "")
+		fmt.Fprintf(buf, "%16sRaw Bytes:", "")
+		bs := crt.TBSCertificate.PublicKey.PublicKey.Bytes
+		for i, val := range bs {
+			if (i % 15) == 0 {
+				fmt.Fprintf(buf, "\n%20s", "")
+			}
+			fmt.Fprintf(buf, "%02x", val)
+			if i != len(bs)-1 {
+				fmt.Fprint(buf, ":")
+			}
+		}
+		fmt.Fprint(buf, "\n")
+		return
+	case *x509.CertificateRequest:
+		var cr certificateRequest
+		if rest, err := asn1.Unmarshal(c.Raw, &cr); err != nil || len(rest) > 0 {
+			break
+		}
+		fmt.Fprintln(buf, getUnknownAlgorithmName(cr.TBSCSR.PublicKey.Algorithm.Algorithm))
+		fmt.Fprintf(buf, "%16sRaw Bytes:", "")
+		bs := cr.TBSCSR.PublicKey.PublicKey.Bytes
+		for i, val := range bs {
+			if (i % 15) == 0 {
+				fmt.Fprintf(buf, "\n%20s", "")
+			}
+			fmt.Fprintf(buf, "%02x", val)
+			if i != len(bs)-1 {
+				fmt.Fprint(buf, ":")
+			}
+		}
+		fmt.Fprint(buf, "\n")
+		return
+	}
+
+	fmt.Fprintln(buf, unknown)
 }
 
 func toBase64(b []byte) string {
@@ -655,7 +909,7 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 	fmt.Fprintf(buf, "%4sData:\n", "")
 	printVersion(cert.Version, buf)
 	fmt.Fprintf(buf, "%8sSerial Number: %d (%#x)\n", "", cert.SerialNumber, cert.SerialNumber.Bytes())
-	fmt.Fprintf(buf, "%4sSignature Algorithm: %s\n", "", cert.SignatureAlgorithm)
+	fmt.Fprintf(buf, "%4sSignature Algorithm: %s\n", "", getCertificateSignatureAlgorithmName(cert))
 
 	// Issuer information
 	fmt.Fprintf(buf, "%8sIssuer: ", "")
@@ -667,7 +921,7 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 	fmt.Fprintf(buf, "%12sNot After : %s\n", "", cert.NotAfter.Format(validityTimeFormat))
 
 	// Subject information
-	err := printSubjectInformation(&cert.Subject, cert.PublicKeyAlgorithm, cert.PublicKey, buf)
+	err := printSubjectInformation(&cert.Subject, cert.PublicKeyAlgorithm, cert.PublicKey, cert, buf)
 	if err != nil {
 		return "", err
 	}
@@ -1199,7 +1453,7 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 	}
 
 	// Signature
-	printSignature(cert.SignatureAlgorithm, cert.Signature, buf)
+	printCertificateSignature(cert, cert.Signature, buf)
 
 	// Optional: Print the full PEM certificate
 	/*
@@ -1296,7 +1550,7 @@ func CertificateRequestText(csr *x509.CertificateRequest) (string, error) {
 	printVersion(csr.Version, buf)
 
 	// Subject information
-	err := printSubjectInformation(&csr.Subject, csr.PublicKeyAlgorithm, csr.PublicKey, buf)
+	err := printSubjectInformation(&csr.Subject, csr.PublicKeyAlgorithm, csr.PublicKey, csr, buf)
 	if err != nil {
 		return "", err
 	}
@@ -1525,7 +1779,7 @@ func CertificateRequestText(csr *x509.CertificateRequest) (string, error) {
 	}
 
 	// Signature
-	printSignature(csr.SignatureAlgorithm, csr.Signature, buf)
+	printCertificateRequestSignature(csr, csr.Signature, buf)
 
 	return buf.String(), nil
 }
