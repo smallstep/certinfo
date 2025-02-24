@@ -1,11 +1,12 @@
 module github.com/smallstep/certinfo
 
 go 1.22.7
+toolchain go1.23.6
 
 require (
 	github.com/google/certificate-transparency-go v1.3.1
 	github.com/google/go-cmp v0.6.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.34.0
 )
 
 require (
