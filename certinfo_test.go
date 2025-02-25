@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"crypto/x509"
 	"encoding/pem"
+	"math"
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -168,4 +170,31 @@ func TestNoCN(t *testing.T) {
 func TestSigstoreCertInfo(t *testing.T) {
 	testPair(t, "test_certs/sigstore1.cert.pem", "test_certs/sigstore1.cert.text", tCertificate)
 	testPair(t, "test_certs/sigstore2.cert.pem", "test_certs/sigstore2.cert.text", tCertificate)
+}
+
+func Test_mustInt64(t *testing.T) {
+	if v := mustInt64(0); v != 0 {
+		t.Errorf("expected 0; got %d", v)
+	}
+
+	if v := mustInt64(math.MaxInt64); v != math.MaxInt64 {
+		t.Errorf("expected 9223372036854775807; got %d", v)
+	}
+
+	if v := mustInt64(42); v != 42 {
+		t.Errorf("expected 42; got %d", v)
+	}
+
+	mustPanic(t, func() { mustInt64(math.MaxInt64 + 1) })
+}
+
+func mustPanic(t *testing.T, f func()) {
+	defer func() {
+		if r := recover(); r == nil {
+			_, file, line, _ := runtime.Caller(2)
+			t.Errorf("expected function call at %s:%d to panic", file, line)
+		}
+	}()
+
+	f()
 }

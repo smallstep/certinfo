@@ -2,7 +2,7 @@ package certinfo
 
 import (
 	"bytes"
-	"crypto/dsa"
+	"crypto/dsa" //nolint:staticcheck // support legacy format.
 	"crypto/ecdsa"
 	"crypto/ed25519"
 	"crypto/rsa"
@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"math"
 	"math/big"
 	"net"
 	"net/url"
@@ -1123,10 +1124,10 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 				}
 
 				for i, sct := range scts {
-					sec := int64(sct.Timestamp / 1000)
-					nsec := int64(sct.Timestamp % 1000)
+					sec := mustInt64(sct.Timestamp / 1000)
+					nsec := mustInt64(sct.Timestamp % 1000)
 					fmt.Fprintf(buf, "%16sSCT [%d]:\n", "", i)
-					fmt.Fprintf(buf, "%20sVersion: %s (%#x)\n", "", sct.SCTVersion, int64(sct.SCTVersion))
+					fmt.Fprintf(buf, "%20sVersion: %s (%#x)\n", "", sct.SCTVersion, mustInt64(uint64(sct.SCTVersion)))
 					fmt.Fprintf(buf, "%20sLogID: %s\n", "", toBase64(sct.LogID.KeyID[:]))
 					fmt.Fprintf(buf, "%20sTimestamp: %s\n", "", time.Unix(sec, nsec*1e6).UTC().Format(sctTimeFormat))
 					// There are no available extensions
@@ -1528,4 +1529,12 @@ func CertificateRequestText(csr *x509.CertificateRequest) (string, error) {
 	printSignature(csr.SignatureAlgorithm, csr.Signature, buf)
 
 	return buf.String(), nil
+}
+
+func mustInt64(x uint64) int64 {
+	if x > math.MaxInt64 {
+		panic(fmt.Errorf("value %d out of range for int64", x))
+	}
+
+	return int64(x)
 }
