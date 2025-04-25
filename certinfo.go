@@ -94,6 +94,8 @@ var stepManagedEndpointKind = [...]string{
 	"Device",   // Type 1
 	"Workload", // Type 2
 	"People",   // Type 3
+	"Agent",    // Type 4
+	"Account",  // Type 5
 }
 
 // validity allows unmarshaling the certificate validity date range
