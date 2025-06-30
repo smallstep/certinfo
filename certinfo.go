@@ -302,6 +302,8 @@ func printName(names []pkix.AttributeTypeAndValue, buf *bytes.Buffer) []string {
 			values = append(values, fmt.Sprintf("DC=%s", name.Value))
 		case oid.Equal(oidUserID):
 			values = append(values, fmt.Sprintf("UID=%s", name.Value))
+		case func() bool { _, ok := name.Value.(string); return ok }():
+			values = append(values, fmt.Sprintf("%s=%s", name.Type.String(), name.Value.(string)))
 		default:
 			values = append(values, fmt.Sprintf("UnknownOID=%s", name.Type.String()))
 		}
