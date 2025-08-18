@@ -648,9 +648,7 @@ func CertificateRequestShortText(cr *x509.CertificateRequest) (string, error) {
 // of the certificate cert. The format is similar (but not identical)
 // to the OpenSSL way of printing certificates.
 func CertificateText(cert *x509.Certificate) (string, error) {
-	var (
-		bbuf bytes.Buffer
-	)
+	var bbuf bytes.Buffer
 	bbuf.Grow(4096) // 4KiB should be enough
 	buf := &bbuf
 
@@ -658,7 +656,7 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 	fmt.Fprintf(buf, "%4sData:\n", "")
 	printVersion(cert.Version, buf)
 	fmt.Fprintf(buf, "%8sSerial Number: %d (%#x)\n", "", cert.SerialNumber, cert.SerialNumber.Bytes())
-	fmt.Fprintf(buf, "%4sSignature Algorithm: %s\n", "", cert.SignatureAlgorithm)
+	fmt.Fprintf(buf, "%8sSignature Algorithm: %s\n", "", cert.SignatureAlgorithm)
 
 	// Issuer information
 	fmt.Fprintf(buf, "%8sIssuer: ", "")
