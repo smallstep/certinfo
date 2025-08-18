@@ -656,7 +656,7 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 	fmt.Fprintf(buf, "%4sData:\n", "")
 	printVersion(cert.Version, buf)
 	fmt.Fprintf(buf, "%8sSerial Number: %d (%#x)\n", "", cert.SerialNumber, cert.SerialNumber.Bytes())
-	fmt.Fprintf(buf, "%4sSignature Algorithm: %s\n", "", cert.SignatureAlgorithm)
+	fmt.Fprintf(buf, "%8sSignature Algorithm: %s\n", "", cert.SignatureAlgorithm)
 
 	// Issuer information
 	fmt.Fprintf(buf, "%8sIssuer: ", "")

@@ -2,7 +2,7 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number: 265869080288155511757422126858285293665 (0xc80485b58ad2926553dc3374f5532061)
-    Signature Algorithm: ECDSA-SHA256
+        Signature Algorithm: ECDSA-SHA256
         Issuer: CN=Smallstep Root CA
         Validity
             Not Before: Feb 21 21:24:02 2019 UTC

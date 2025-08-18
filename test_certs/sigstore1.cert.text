@@ -2,7 +2,7 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number: 2320580145869058136443151369323359520969369274 (0x680ef42157f8cd21655857f9e1a81558a2a6ba)
-    Signature Algorithm: ECDSA-SHA384
+        Signature Algorithm: ECDSA-SHA384
         Issuer: O=sigstore.dev,CN=sigstore
         Validity
             Not Before: Feb 1 23:07:29 2022 UTC

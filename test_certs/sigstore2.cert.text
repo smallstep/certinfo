@@ -2,7 +2,7 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number: 453516479926854321636729881678065165927286592679 (0x4f7061de65a6269fb6c13414c63d7d475bd854a7)
-    Signature Algorithm: ECDSA-SHA256
+        Signature Algorithm: ECDSA-SHA256
         Issuer: C=USA,ST=WA,L=Kirkland,STREET=767 6th St S,POSTALCODE=98033,O=sigstore
         Validity
             Not Before: Sep 29 18:37:21 2022 UTC
