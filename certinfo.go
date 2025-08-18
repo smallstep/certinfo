@@ -648,9 +648,7 @@ func CertificateRequestShortText(cr *x509.CertificateRequest) (string, error) {
 // of the certificate cert. The format is similar (but not identical)
 // to the OpenSSL way of printing certificates.
 func CertificateText(cert *x509.Certificate) (string, error) {
-	var (
-		bbuf bytes.Buffer
-	)
+	var bbuf bytes.Buffer
 	bbuf.Grow(4096) // 4KiB should be enough
 	buf := &bbuf
 
@@ -909,9 +907,12 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 					} else {
 						fmt.Fprint(buf, "\n")
 					}
-					fmt.Fprintf(buf, "%16skeyid", "")
-					for _, val := range cert.AuthorityKeyId {
-						fmt.Fprintf(buf, ":%02X", val)
+					for i, val := range cert.AuthorityKeyId {
+						if i == 0 {
+							fmt.Fprintf(buf, "%16s%02X", "", val)
+						} else {
+							fmt.Fprintf(buf, ":%02X", val)
+						}
 					}
 					fmt.Fprint(buf, "\n")
 				case 37:

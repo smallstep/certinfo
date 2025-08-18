@@ -28,7 +28,7 @@ Certificate:
             X509v3 Subject Key Identifier:
                 3B:2D:8C:D6:F0:71:10:EB:DF:7A:B9:4E:DD:24:52:33:CB:AC:6D:2C
             X509v3 Authority Key Identifier:
-                keyid:DF:33:25:1A:5F:FE:27:51:DE:8A:17:F3:6A:32:27:90:42:50:51:A3
+                DF:33:25:1A:5F:FE:27:51:DE:8A:17:F3:6A:32:27:90:42:50:51:A3
             X509v3 Subject Alternative Name: critical
                 Sigstore Identity: foo!127.0.0.1
             Sigstore OIDC Issuer:
