@@ -32,7 +32,7 @@ Certificate:
             X509v3 Subject Key Identifier:
                 B8:CE:91:DD:54:67:4A:1C:21:3E:56:8E:4C:41:49:0E:6A:00:46:12
             X509v3 Authority Key Identifier:
-                keyid:7C:0F:26:9D:ED:C8:7A:C0:05:1E:99:A3:5D:A5:9E:8D:A6:A6:96:5E
+                7C:0F:26:9D:ED:C8:7A:C0:05:1E:99:A3:5D:A5:9E:8D:A6:A6:96:5E
     Signature Algorithm: SHA1-RSA
          98:7e:71:29:a3:a6:48:06:0b:ab:3a:ae:84:e7:4b:3c:74:01:
          6b:0e:b2:8b:3d:24:f0:ef:76:3c:b8:7b:93:0d:fc:ad:cf:c5:

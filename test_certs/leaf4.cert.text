@@ -28,7 +28,7 @@ Certificate:
             X509v3 Subject Key Identifier:
                 66:52:36:55:36:A8:43:9C:41:89:62:6B:57:D4:6B:A6:47:3B:F4:F5
             X509v3 Authority Key Identifier:
-                keyid:17:8F:7C:D2:64:44:F1:C4:20:31:14:D5:06:25:03:D8:AF:BD:49:0B
+                17:8F:7C:D2:64:44:F1:C4:20:31:14:D5:06:25:03:D8:AF:BD:49:0B
             X509v3 Subject Alternative Name:
                 DNS:router.example.com, DNS:bastion.example.com
                 IP Address:192.168.1.1

@@ -30,7 +30,7 @@ Certificate:
             X509v3 Subject Key Identifier:
                 5D:11:E8:9B:0C:80:A2:77:F5:F3:97:18:27:CC:29:17:D2:63:57:2E
             X509v3 Authority Key Identifier:
-                keyid:58:C0:1E:5F:91:45:A5:66:A9:7A:CC:90:A1:93:22:D0:2A:C5:C5:FA
+                58:C0:1E:5F:91:45:A5:66:A9:7A:CC:90:A1:93:22:D0:2A:C5:C5:FA
             X509v3 Subject Alternative Name:
                 URI:https://github.com/hslatman/symfony-cli/.github/workflows/releaser.yml@refs/tags/v5.3.0-exp-sign-4
             Sigstore GitHub Workflow Repository:
