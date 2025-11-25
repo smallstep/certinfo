@@ -610,6 +610,20 @@ func printSCTSignature(sig ct.DigitallySigned, buf *bytes.Buffer) {
 	fmt.Fprint(buf, "\n")
 }
 
+func printSCTExtensions(ext ct.CTExtensions, buf *bytes.Buffer) {
+	fmt.Fprintf(buf, "%20sExtensions:", "")
+	for i, val := range ext {
+		if (i % 18) == 0 {
+			fmt.Fprintf(buf, "\n%22s", "")
+		}
+		fmt.Fprintf(buf, "%02x", val)
+		if i != len(ext)-1 {
+			fmt.Fprint(buf, ":")
+		}
+	}
+	fmt.Fprint(buf, "\n")
+}
+
 func printExtensionHeader(name string, ext pkix.Extension, buf *bytes.Buffer) {
 	fmt.Fprintf(buf, "%12s%s:", "", name)
 	if ext.Critical {
@@ -1133,8 +1147,9 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 					fmt.Fprintf(buf, "%20sVersion: %s (%#x)\n", "", sct.SCTVersion, mustInt64(uint64(sct.SCTVersion)))
 					fmt.Fprintf(buf, "%20sLogID: %s\n", "", toBase64(sct.LogID.KeyID[:]))
 					fmt.Fprintf(buf, "%20sTimestamp: %s\n", "", time.Unix(sec, nsec*1e6).UTC().Format(sctTimeFormat))
-					// There are no available extensions
-					// fmt.Fprintf(buf, "%20sExtensions: %v\n", "", sct.Extensions)
+					if len(sct.Extensions) > 0 {
+						printSCTExtensions(sct.Extensions, buf)
+					}
 					printSCTSignature(sct.Signature, buf)
 				}
 			case ext.Id.Equal(oidYubicoFirmwareVersion):
