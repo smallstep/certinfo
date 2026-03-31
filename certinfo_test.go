@@ -21,6 +21,8 @@ const (
 
 // Compares a PEM-encoded certificate to a reference file.
 func testPair(t *testing.T, certFile, refFile string, inputType InputType) {
+	t.Helper()
+
 	// Read and parse the certificate
 	pemData, err := os.ReadFile(certFile)
 	if err != nil {
@@ -68,6 +70,8 @@ func testPair(t *testing.T, certFile, refFile string, inputType InputType) {
 
 // Compares a PEM-encoded certificate to a reference file.
 func testPairShort(t *testing.T, certFile, refFile string, inputType InputType) {
+	t.Helper()
+
 	// Read and parse the certificate
 	pemData, err := os.ReadFile(certFile)
 	if err != nil {
@@ -170,6 +174,22 @@ func TestNoCN(t *testing.T) {
 func TestSigstoreCertInfo(t *testing.T) {
 	testPair(t, "test_certs/sigstore1.cert.pem", "test_certs/sigstore1.cert.text", tCertificate)
 	testPair(t, "test_certs/sigstore2.cert.pem", "test_certs/sigstore2.cert.text", tCertificate)
+}
+
+func TestUnknownCrypto(t *testing.T) {
+	testPair(t, "test_certs/ML-DSA-44.crt", "test_certs/ML-DSA-44.crt.text", tCertificate)
+	testPair(t, "test_certs/ML-DSA-65.crt", "test_certs/ML-DSA-65.crt.text", tCertificate)
+	testPair(t, "test_certs/ML-DSA-87.crt", "test_certs/ML-DSA-87.crt.text", tCertificate)
+	testPairShort(t, "test_certs/ML-DSA-44.crt", "test_certs/ML-DSA-44.crt.text.short", tCertificate)
+	testPairShort(t, "test_certs/ML-DSA-65.crt", "test_certs/ML-DSA-65.crt.text.short", tCertificate)
+	testPairShort(t, "test_certs/ML-DSA-87.crt", "test_certs/ML-DSA-87.crt.text.short", tCertificate)
+
+	testPair(t, "test_certs/digicert_mldsa-44.csr", "test_certs/digicert_mldsa-44.csr.text", tCertificateRequest)
+	testPair(t, "test_certs/digicert_mldsa-65.csr", "test_certs/digicert_mldsa-65.csr.text", tCertificateRequest)
+	testPair(t, "test_certs/digicert_mldsa-87.csr", "test_certs/digicert_mldsa-87.csr.text", tCertificateRequest)
+	testPairShort(t, "test_certs/digicert_mldsa-44.csr", "test_certs/digicert_mldsa-44.csr.text.short", tCertificateRequest)
+	testPairShort(t, "test_certs/digicert_mldsa-65.csr", "test_certs/digicert_mldsa-65.csr.text.short", tCertificateRequest)
+	testPairShort(t, "test_certs/digicert_mldsa-87.csr", "test_certs/digicert_mldsa-87.csr.text.short", tCertificateRequest)
 }
 
 func Test_mustInt64(t *testing.T) {
