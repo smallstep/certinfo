@@ -2,7 +2,7 @@ package certinfo
 
 import (
 	"bytes"
-	"crypto/dsa"
+	"crypto/dsa" //nolint:staticcheck // support legacy format.
 	"crypto/ecdsa"
 	"crypto/ed25519"
 	"crypto/rsa"
@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"math"
 	"math/big"
 	"net"
 	"net/url"
@@ -139,6 +140,8 @@ var stepManagedEndpointKind = [...]string{
 	"Device",   // Type 1
 	"Workload", // Type 2
 	"People",   // Type 3
+	"Agent",    // Type 4
+	"Account",  // Type 5
 }
 
 // validity allows unmarshaling the certificate validity date range
@@ -370,6 +373,8 @@ func printName(names []pkix.AttributeTypeAndValue, buf *bytes.Buffer) []string {
 			values = append(values, fmt.Sprintf("DC=%s", name.Value))
 		case oid.Equal(oidUserID):
 			values = append(values, fmt.Sprintf("UID=%s", name.Value))
+		case func() bool { _, ok := name.Value.(string); return ok }():
+			values = append(values, fmt.Sprintf("%s=%s", name.Type.String(), name.Value.(string)))
 		default:
 			values = append(values, fmt.Sprintf("UnknownOID=%s", name.Type.String()))
 		}
@@ -899,9 +904,7 @@ func CertificateRequestShortText(cr *x509.CertificateRequest) (string, error) {
 // of the certificate cert. The format is similar (but not identical)
 // to the OpenSSL way of printing certificates.
 func CertificateText(cert *x509.Certificate) (string, error) {
-	var (
-		bbuf bytes.Buffer
-	)
+	var bbuf bytes.Buffer
 	bbuf.Grow(4096) // 4KiB should be enough
 	buf := &bbuf
 
@@ -909,7 +912,7 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 	fmt.Fprintf(buf, "%4sData:\n", "")
 	printVersion(cert.Version, buf)
 	fmt.Fprintf(buf, "%8sSerial Number: %d (%#x)\n", "", cert.SerialNumber, cert.SerialNumber.Bytes())
-	fmt.Fprintf(buf, "%4sSignature Algorithm: %s\n", "", getCertificateSignatureAlgorithmName(cert))
+	fmt.Fprintf(buf, "%8sSignature Algorithm: %s\n", "", getCertificateSignatureAlgorithmName(cert))
 
 	// Issuer information
 	fmt.Fprintf(buf, "%8sIssuer: ", "")
@@ -1160,9 +1163,12 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 					} else {
 						fmt.Fprint(buf, "\n")
 					}
-					fmt.Fprintf(buf, "%16skeyid", "")
-					for _, val := range cert.AuthorityKeyId {
-						fmt.Fprintf(buf, ":%02X", val)
+					for i, val := range cert.AuthorityKeyId {
+						if i == 0 {
+							fmt.Fprintf(buf, "%16s%02X", "", val)
+						} else {
+							fmt.Fprintf(buf, ":%02X", val)
+						}
 					}
 					fmt.Fprint(buf, "\n")
 				case 37:
@@ -1377,10 +1383,10 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 				}
 
 				for i, sct := range scts {
-					sec := int64(sct.Timestamp / 1000)
-					nsec := int64(sct.Timestamp % 1000)
+					sec := mustInt64(sct.Timestamp / 1000)
+					nsec := mustInt64(sct.Timestamp % 1000)
 					fmt.Fprintf(buf, "%16sSCT [%d]:\n", "", i)
-					fmt.Fprintf(buf, "%20sVersion: %s (%#x)\n", "", sct.SCTVersion, int64(sct.SCTVersion))
+					fmt.Fprintf(buf, "%20sVersion: %s (%#x)\n", "", sct.SCTVersion, mustInt64(uint64(sct.SCTVersion)))
 					fmt.Fprintf(buf, "%20sLogID: %s\n", "", toBase64(sct.LogID.KeyID[:]))
 					fmt.Fprintf(buf, "%20sTimestamp: %s\n", "", time.Unix(sec, nsec*1e6).UTC().Format(sctTimeFormat))
 					// There are no available extensions
@@ -1782,4 +1788,12 @@ func CertificateRequestText(csr *x509.CertificateRequest) (string, error) {
 	printCertificateRequestSignature(csr, csr.Signature, buf)
 
 	return buf.String(), nil
+}
+
+func mustInt64(x uint64) int64 {
+	if x > math.MaxInt64 {
+		panic(fmt.Errorf("value %d out of range for int64", x))
+	}
+
+	return int64(x)
 }

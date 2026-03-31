@@ -2,7 +2,7 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number: 123456789012345678901234567890123456789012345678 (0x159ffe6f22fd5cc42c524df6fd5e28d0de38f34e)
-    Signature Algorithm: ML-DSA-44
+        Signature Algorithm: ML-DSA-44
         Issuer: O=IETF,CN=LAMPS WG
         Validity
             Not Before: Feb 3 04:32:10 2020 UTC

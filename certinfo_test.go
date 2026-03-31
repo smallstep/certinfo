@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"crypto/x509"
 	"encoding/pem"
+	"math"
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -19,6 +21,8 @@ const (
 
 // Compares a PEM-encoded certificate to a reference file.
 func testPair(t *testing.T, certFile, refFile string, inputType InputType) {
+	t.Helper()
+
 	// Read and parse the certificate
 	pemData, err := os.ReadFile(certFile)
 	if err != nil {
@@ -66,6 +70,8 @@ func testPair(t *testing.T, certFile, refFile string, inputType InputType) {
 
 // Compares a PEM-encoded certificate to a reference file.
 func testPairShort(t *testing.T, certFile, refFile string, inputType InputType) {
+	t.Helper()
+
 	// Read and parse the certificate
 	pemData, err := os.ReadFile(certFile)
 	if err != nil {
@@ -184,4 +190,31 @@ func TestUnknownCrypto(t *testing.T) {
 	testPairShort(t, "test_certs/digicert_mldsa-44.csr", "test_certs/digicert_mldsa-44.csr.text.short", tCertificateRequest)
 	testPairShort(t, "test_certs/digicert_mldsa-65.csr", "test_certs/digicert_mldsa-65.csr.text.short", tCertificateRequest)
 	testPairShort(t, "test_certs/digicert_mldsa-87.csr", "test_certs/digicert_mldsa-87.csr.text.short", tCertificateRequest)
+}
+
+func Test_mustInt64(t *testing.T) {
+	if v := mustInt64(0); v != 0 {
+		t.Errorf("expected 0; got %d", v)
+	}
+
+	if v := mustInt64(math.MaxInt64); v != math.MaxInt64 {
+		t.Errorf("expected 9223372036854775807; got %d", v)
+	}
+
+	if v := mustInt64(42); v != 42 {
+		t.Errorf("expected 42; got %d", v)
+	}
+
+	mustPanic(t, func() { mustInt64(math.MaxInt64 + 1) })
+}
+
+func mustPanic(t *testing.T, f func()) {
+	defer func() {
+		if r := recover(); r == nil {
+			_, file, line, _ := runtime.Caller(2)
+			t.Errorf("expected function call at %s:%d to panic", file, line)
+		}
+	}()
+
+	f()
 }
