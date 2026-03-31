@@ -22,7 +22,7 @@ type formatBuffer struct {
 
 // Writef writes a string formated using fmt.Sprintf.
 func (b *formatBuffer) Writef(format string, args ...interface{}) (int, error) {
-	return b.Buffer.WriteString(fmt.Sprintf(format, args...))
+	return fmt.Fprintf(&b.Buffer, format, args...)
 }
 
 type certificateShort struct {
