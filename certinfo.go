@@ -405,10 +405,7 @@ func dsaKeyPrinter(name string, val *big.Int, buf *bytes.Buffer) {
 }
 
 func printVersion(version int, buf *bytes.Buffer) {
-	hexVersion := version - 1
-	if hexVersion < 0 {
-		hexVersion = 0
-	}
+	hexVersion := max(version-1, 0)
 	fmt.Fprintf(buf, "%8sVersion: %d (%#x)\n", "", version, hexVersion)
 }
 
@@ -480,6 +477,24 @@ func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk
 			fmt.Fprint(buf, "\n")
 		} else {
 			return errors.New("certinfo: Expected ed25519.PublicKey for type x509.ED25519")
+		}
+	case x509MLDSA:
+		fmt.Fprintf(buf, "ML-DSA\n")
+		if mlKey, ok := pk.(*mldsaPublicKey); ok {
+			fmt.Fprintf(buf, "%16sPublic-Key: %s (%d bytes)", "", mlKey.Parameters().String(), mlKey.Parameters().PublicKeySize())
+			bs := mlKey.Bytes()
+			for i, b := range bs {
+				if (i % 15) == 0 {
+					fmt.Fprintf(buf, "\n%20s", "")
+				}
+				fmt.Fprintf(buf, "%02x", b)
+				if i != len(bs)-1 {
+					fmt.Fprint(buf, ":")
+				}
+			}
+			fmt.Fprint(buf, "\n")
+		} else {
+			return errors.New("certinfo: Expected mldsa.PublicKey for type x509.MLDSA")
 		}
 	default:
 		printUnknownPublicKeyAlgorithm(certOrCSR, buf)
@@ -1505,7 +1520,7 @@ func parseKeyUsage(val []byte) (x509.KeyUsage, error) {
 		return 0, err
 	}
 	var usage int
-	for i := 0; i < 9; i++ {
+	for i := range 9 {
 		if usageBits.At(i) != 0 {
 			usage |= 1 << uint(i)
 		}

@@ -21,7 +21,7 @@ type formatBuffer struct {
 }
 
 // Writef writes a string formated using fmt.Sprintf.
-func (b *formatBuffer) Writef(format string, args ...interface{}) (int, error) {
+func (b *formatBuffer) Writef(format string, args ...any) (int, error) {
 	return fmt.Fprintf(&b.Buffer, format, args...)
 }
 
@@ -192,7 +192,7 @@ func getProvisioner(cert *x509.Certificate) *provisioner {
 	return nil
 }
 
-func getPublicKeyAlgorithm(algorithm x509.PublicKeyAlgorithm, key interface{}) string {
+func getPublicKeyAlgorithm(algorithm x509.PublicKeyAlgorithm, key any) string {
 	var params string
 	switch pk := key.(type) {
 	case *ecdsa.PublicKey:
@@ -203,6 +203,9 @@ func getPublicKeyAlgorithm(algorithm x509.PublicKeyAlgorithm, key interface{}) s
 		params = strconv.Itoa(pk.Q.BitLen())
 	case ed25519.PublicKey:
 		params = strconv.Itoa(len(pk) * 8)
+	case *mldsaPublicKey:
+		// Return only the parameter set, "ML-DSA ML-DSA-44" is redundant.
+		return pk.Parameters().String()
 	default:
 		params = "unknown"
 	}
