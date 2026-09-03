@@ -479,7 +479,7 @@ func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk
 			return errors.New("certinfo: Expected ed25519.PublicKey for type x509.ED25519")
 		}
 	case x509MLDSA:
-		fmt.Fprintf(buf, "ML-DSA\n")
+		fmt.Fprint(buf, "ML-DSA\n")
 		if mlKey, ok := pk.(*mldsaPublicKey); ok {
 			fmt.Fprintf(buf, "%16sPublic-Key: %s (%d bytes)", "", mlKey.Parameters().String(), mlKey.Parameters().PublicKeySize())
 			bs := mlKey.Bytes()
@@ -494,7 +494,7 @@ func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk
 			}
 			fmt.Fprint(buf, "\n")
 		} else {
-			return errors.New("certinfo: Expected mldsa.PublicKey for type x509.MLDSA")
+			return errors.New("certinfo: Expected *mldsa.PublicKey for type x509.MLDSA")
 		}
 	default:
 		printUnknownPublicKeyAlgorithm(certOrCSR, buf)
