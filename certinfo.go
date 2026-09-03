@@ -456,8 +456,8 @@ func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk
 		if ecdsaKey, ok := pk.(*ecdsa.PublicKey); ok {
 			fmt.Fprintf(buf, "%16sPublic-Key: (%d bit)\n", "", ecdsaKey.Params().BitSize)
 			fmt.Fprintf(buf, "%16sCurve: %s\n", "", ecdsaKey.Params().Name)
-			dsaKeyPrinter("X", ecdsaKey.X, buf) //nolint:eprecated //
-			dsaKeyPrinter("Y", ecdsaKey.Y, buf)
+			dsaKeyPrinter("X", ecdsaKey.X, buf) //nolint:deprecated // only for information purposes
+			dsaKeyPrinter("Y", ecdsaKey.Y, buf) //nolint:deprecated // only for information purposes
 		} else {
 			return errors.New("certinfo: Expected ecdsa.PublicKey for type x509.DSA")
 		}
