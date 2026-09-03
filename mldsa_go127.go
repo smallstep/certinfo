@@ -7,6 +7,6 @@ import (
 	"crypto/x509"
 )
 
-var x509MLDSA = x509.MLDSA
+const x509MLDSA = x509.MLDSA
 
 type mldsaPublicKey = mldsa.PublicKey

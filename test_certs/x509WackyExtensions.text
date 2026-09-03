@@ -5,6 +5,7 @@ Certificate Request:
         Subject Public Key Info:
             Public Key Algorithm: ECDSA
                 Public-Key: (256 bit)
+                Curve: P-256
                 X:
                     10:da:5b:ec:40:48:38:d0:8d:ef:2a:42:41:03:9c:
                     d6:d9:5a:cf:49:cb:b7:4e:76:d7:00:29:12:fe:b9:
@@ -13,7 +14,6 @@ Certificate Request:
                     64:74:45:1a:c4:87:37:ef:25:e9:b6:4b:51:f3:28:
                     df:e0:ee:0e:c2:28:f1:df:30:f5:dd:63:5d:3e:e6:
                     32:68
-                Curve: P-256
         Requested Extensions:
             X509v3 Subject Alternative Name:
                 DNS:foo

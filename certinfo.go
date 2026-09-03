@@ -455,9 +455,9 @@ func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk
 		fmt.Fprint(buf, "ECDSA\n")
 		if ecdsaKey, ok := pk.(*ecdsa.PublicKey); ok {
 			fmt.Fprintf(buf, "%16sPublic-Key: (%d bit)\n", "", ecdsaKey.Params().BitSize)
-			dsaKeyPrinter("X", ecdsaKey.X, buf)
-			dsaKeyPrinter("Y", ecdsaKey.Y, buf)
 			fmt.Fprintf(buf, "%16sCurve: %s\n", "", ecdsaKey.Params().Name)
+			dsaKeyPrinter("X", ecdsaKey.X, buf) //nolint:eprecated //
+			dsaKeyPrinter("Y", ecdsaKey.Y, buf)
 		} else {
 			return errors.New("certinfo: Expected ecdsa.PublicKey for type x509.DSA")
 		}
@@ -479,9 +479,9 @@ func printSubjectInformation(subj *pkix.Name, pkAlgo x509.PublicKeyAlgorithm, pk
 			return errors.New("certinfo: Expected ed25519.PublicKey for type x509.ED25519")
 		}
 	case x509MLDSA:
-		fmt.Fprint(buf, "ML-DSA\n")
 		if mlKey, ok := pk.(*mldsaPublicKey); ok {
-			fmt.Fprintf(buf, "%16sPublic-Key: %s (%d bytes)", "", mlKey.Parameters().String(), mlKey.Parameters().PublicKeySize())
+			fmt.Fprintf(buf, "%s\n", mlKey.Parameters().String())
+			fmt.Fprintf(buf, "%16sPublic-Key: (%d bytes)", "", mlKey.Parameters().PublicKeySize())
 			bs := mlKey.Bytes()
 			for i, b := range bs {
 				if (i % 15) == 0 {

@@ -9,8 +9,8 @@ Certificate:
             Not After : Jan 29 04:32:10 2040 UTC
         Subject: O=IETF,CN=LAMPS WG
         Subject Public Key Info:
-            Public Key Algorithm: ML-DSA
-                Public-Key: ML-DSA-65 (1952 bytes)
+            Public Key Algorithm: ML-DSA-65
+                Public-Key: (1952 bytes)
                     48:68:3d:91:97:8e:31:eb:3d:dd:b8:b0:47:34:82:
                     d2:b8:8a:5f:62:59:49:fd:8f:58:a5:61:e6:96:bd:
                     4c:27:d0:5b:38:db:b2:ed:f0:1e:66:4e:fd:81:be:

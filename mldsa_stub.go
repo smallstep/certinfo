@@ -4,7 +4,7 @@ package certinfo
 
 import "crypto/x509"
 
-var x509MLDSA = x509.PublicKeyAlgorithm(-1)
+const x509MLDSA = x509.PublicKeyAlgorithm(-1)
 
 type mldsaPublicKey struct{}
 
