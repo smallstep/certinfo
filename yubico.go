@@ -4,6 +4,7 @@ import (
 	"encoding/asn1"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Yubico PIV attestation OIDs from
@@ -37,15 +38,15 @@ func yubicoVersion(v []byte) string {
 		return "unknown"
 	}
 
-	var version string
+	var version strings.Builder
 	for i, b := range v {
 		if i < len(v)-1 {
-			version += strconv.Itoa(int(b)) + "."
+			version.WriteString(strconv.Itoa(int(b)) + ".")
 		} else {
-			version += strconv.Itoa(int(b))
+			version.WriteString(strconv.Itoa(int(b)))
 		}
 	}
-	return version
+	return version.String()
 }
 
 func yubicoPolicies(v []byte) []string {

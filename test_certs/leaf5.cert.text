@@ -11,6 +11,7 @@ Certificate:
         Subject Public Key Info:
             Public Key Algorithm: ECDSA
                 Public-Key: (521 bit)
+                Curve: P-521
                 X:
                     01:26:ad:fe:34:63:28:8e:b6:6f:7f:1e:bc:4a:d8:
                     72:c9:31:c4:66:60:35:42:7f:06:3a:78:74:de:9a:
@@ -23,7 +24,6 @@ Certificate:
                     d4:0d:d2:2b:56:0f:1a:04:34:26:83:d7:b0:9f:d8:
                     2f:bc:70:75:54:64:21:98:fd:3b:9f:db:f3:b1:f5:
                     73:74:69:25:35
-                Curve: P-521
         X509v3 extensions:
             X509v3 Basic Constraints:
                 CA:FALSE

@@ -11,6 +11,7 @@ Certificate:
         Subject Public Key Info:
             Public Key Algorithm: ECDSA
                 Public-Key: (256 bit)
+                Curve: P-256
                 X:
                     08:e4:82:81:3e:9f:f5:f6:e9:7a:6d:c3:fd:50:cc:
                     b6:58:d1:0b:56:1d:a7:20:97:da:b0:2a:5b:ed:a0:
@@ -19,7 +20,6 @@ Certificate:
                     33:e0:bf:af:d5:a5:4f:a5:6d:c8:13:a9:ec:53:ff:
                     7d:41:db:db:82:3b:9f:a5:83:19:ea:31:be:1d:31:
                     bc:e7
-                Curve: P-256
         X509v3 extensions:
             X509v3 Key Usage: critical
                 Digital Signature
