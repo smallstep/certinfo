@@ -1,0 +1,37 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 5 (0x05)
+        Signature Algorithm: SHA256-RSA
+        Issuer: C=US,ST=California,O=World Widget Authority,OU=Identity Affairs,CN=worldwidgetauthority.com,emailAddress=nobody@worldwidgetauthority.com
+        Validity
+            Not Before: Jul 23 18:56:47 2020 UTC
+            Not After : Jun 30 07:37:21 2040 UTC
+        Subject: C=AU,ST=Victoria,O=Southern Widgets Corporation,OU=21st Century Department,CN=leaf6,emailAddress=nobody@southernwidgets.com
+        Subject Public Key Info:
+            Public Key Algorithm: RSA
+                Public-Key: (512 bit)
+                Modulus:
+                    e6:99:72:57:de:fd:ac:fb:2c:20:d5:01:b3:80:7d:
+                    93:dc:16:16:56:c3:4f:5c:89:77:8e:7f:8d:32:72:
+                    1a:f4:68:63:df:d0:aa:7b:02:83:1c:c4:d5:b4:2e:
+                    70:dc:db:5f:78:e4:b5:ba:b9:ea:3b:a4:cd:91:0c:
+                    ad:9f:1f:b3
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints:
+                CA:FALSE
+            Netscape Comment:
+                This is a test certificate only
+            X509v3 Subject Key Identifier:
+                18:4C:BB:CA:E4:A9:09:C2:8D:99:35:D1:87:EB:36:B8:ED:A2:B5:DF
+            X509v3 Authority Key Identifier:
+                7C:0F:26:9D:ED:C8:7A:C0:05:1E:99:A3:5D:A5:9E:8D:A6:A6:96:5E
+            X509v3 Step Managed Device:
+                DeviceID: 2b2f4e1c-0000-4a1f-9d1e-8a7d2e0f1111
+                EnrolledAt: 2026-10-28T12:00:00Z
+    Signature Algorithm: SHA256-RSA
+         15:b5:72:b7:d7:98:d4:f3:1d:c4:c7:87:6c:9f:4e:a3:8f:06:
+         b9:61:bd:42:08:32:c2:5d:2d:63:7c:2f:23:81:f7:06:10:04:
+         6c:e2:70:4e:a9:f9:fa:9d:21:d1:8c:87:9b:e1:5d:ee:8f:7a:
+         b2:18:9c:12:c3:32:28:1f:61:6e
