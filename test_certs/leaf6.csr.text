@@ -1,0 +1,24 @@
+Certificate Request:
+    Data:
+        Version: 0 (0x0)
+        Subject: C=AU,ST=Victoria,L=Melbourne,O=Southern Widgets Corporation,OU=21st Century Department,CN=leaf6,emailAddress=nobody@southernwidgets.com
+        Subject Public Key Info:
+            Public Key Algorithm: RSA
+                Public-Key: (512 bit)
+                Modulus:
+                    e6:99:72:57:de:fd:ac:fb:2c:20:d5:01:b3:80:7d:
+                    93:dc:16:16:56:c3:4f:5c:89:77:8e:7f:8d:32:72:
+                    1a:f4:68:63:df:d0:aa:7b:02:83:1c:c4:d5:b4:2e:
+                    70:dc:db:5f:78:e4:b5:ba:b9:ea:3b:a4:cd:91:0c:
+                    ad:9f:1f:b3
+                Exponent: 65537 (0x10001)
+        Requested Extensions:
+        Attributes:
+            1.3.6.1.4.1.37476.9000.64.4:
+                07.$2b2f4e1c-0000-4a1f-9d1e-8a7d2e0f1111..20261028120000Z
+                30:37:13:24:32:62:32:66:34:65:31:63:2d:30:30:30:30:2d:34:61:31:66:2d:39:64:31:65:2d:38:61:37:64:32:65:30:66:31:31:31:31:18:0f:32:30:32:36:31:30:32:38:31:32:30:30:30:30:5a
+    Signature Algorithm: SHA256-RSA
+         80:0f:d3:51:2a:a7:e9:4c:25:55:31:76:64:02:a7:45:3f:40:
+         d6:82:53:4e:f8:5e:de:0c:63:04:23:3a:14:63:99:c7:3a:94:
+         c4:00:85:e5:18:d8:16:92:19:65:8e:e8:ca:5f:84:d6:b0:c5:
+         13:a9:9f:a5:fe:d8:15:d6:e4:01

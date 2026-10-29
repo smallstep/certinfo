@@ -167,8 +167,16 @@ type stepManagedEndpoint struct {
 	EndpointID string
 }
 
+// stepManagedDevice is the value of the Step Managed Device extension:
+//
+//	SEQUENCE { deviceID PrintableString, enrolledAt GeneralizedTime OPTIONAL }
+//
+// EnrolledAt is the device's first agent check-in; it is absent until then.
+// Later fields are appended only, each a context-tagged IMPLICIT OPTIONAL, so
+// trailing elements that this reader does not know are ignored.
 type stepManagedDevice struct {
-	DeviceID string
+	DeviceID   string
+	EnrolledAt time.Time `asn1:"generalized,optional"`
 }
 
 // RFC 5280 - https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6
@@ -1376,6 +1384,9 @@ func CertificateText(cert *x509.Certificate) (string, error) {
 				}
 
 				fmt.Fprintf(buf, "%16sDeviceID: %s\n", "", val.DeviceID)
+				if !val.EnrolledAt.IsZero() {
+					fmt.Fprintf(buf, "%16sEnrolledAt: %s\n", "", val.EnrolledAt.UTC().Format(time.RFC3339))
+				}
 			case ext.Id.Equal(oidSignedCertificateTimestampList):
 				fmt.Fprintf(buf, "%12sRFC6962 Certificate Transparency SCT:", "")
 				if ext.Critical {

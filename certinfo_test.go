@@ -2,12 +2,20 @@ package certinfo
 
 import (
 	"bytes"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/asn1"
 	"encoding/pem"
 	"math"
+	"math/big"
 	"os"
 	"runtime"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -162,6 +170,13 @@ func TestCertInfoLeaf5(t *testing.T) {
 	testPairShort(t, "test_certs/leaf5.csr.pem", "test_certs/leaf5.csr.short", tCertificateRequest)
 }
 
+func TestCertInfoLeaf6(t *testing.T) {
+	testPair(t, "test_certs/leaf6.cert.pem", "test_certs/leaf6.cert.text", tCertificate)
+	testPair(t, "test_certs/leaf6.csr.pem", "test_certs/leaf6.csr.text", tCertificateRequest)
+	testPairShort(t, "test_certs/leaf6.cert.pem", "test_certs/leaf6.cert.short", tCertificate)
+	testPairShort(t, "test_certs/leaf6.csr.pem", "test_certs/leaf6.csr.short", tCertificateRequest)
+}
+
 func TestCsrInfoWackyExtensions(t *testing.T) {
 	testPair(t, "test_certs/x509WackyExtensions.pem", "test_certs/x509WackyExtensions.text", tCertificateRequest)
 }
@@ -220,4 +235,94 @@ func mustPanic(t *testing.T, f func()) {
 	}()
 
 	f()
+}
+
+// TestCertificateText_stepManagedDeviceEnrolledAt checks the Step Managed
+// Device extension with the optional enrolledAt field, with and without it,
+// and with a later appended field. Later fields are context-tagged IMPLICIT
+// OPTIONAL elements and readers ignore trailing elements.
+func TestCertificateText_stepManagedDeviceEnrolledAt(t *testing.T) {
+	const deviceID = "2b2f4e1c-0000-4a1f-9d1e-8a7d2e0f1111"
+	enrolledAt := time.Date(2026, 10, 28, 12, 0, 0, 0, time.UTC)
+
+	render := func(t *testing.T, value []byte) string {
+		t.Helper()
+		key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+		if err != nil {
+			t.Fatal(err)
+		}
+		tmpl := &x509.Certificate{
+			SerialNumber: big.NewInt(1),
+			Subject:      pkix.Name{CommonName: "enrollment-test"},
+			NotBefore:    time.Date(2026, 10, 28, 0, 0, 0, 0, time.UTC),
+			NotAfter:     time.Date(2026, 10, 29, 0, 0, 0, 0, time.UTC),
+			ExtraExtensions: []pkix.Extension{
+				{Id: oidStepManagedDevice, Value: value},
+			},
+		}
+		der, err := x509.CreateCertificate(rand.Reader, tmpl, tmpl, &key.PublicKey, key)
+		if err != nil {
+			t.Fatal(err)
+		}
+		cert, err := x509.ParseCertificate(der)
+		if err != nil {
+			t.Fatal(err)
+		}
+		got, err := CertificateText(cert)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return got
+	}
+
+	const (
+		header   = "            X509v3 Step Managed Device:\n"
+		idLine   = "                DeviceID: " + deviceID + "\n"
+		timeLine = "                EnrolledAt: 2026-10-28T12:00:00Z\n"
+	)
+
+	t.Run("device ID only", func(t *testing.T) {
+		value, err := asn1.Marshal(struct {
+			DeviceID string `asn1:"printable"`
+		}{deviceID})
+		if err != nil {
+			t.Fatal(err)
+		}
+		got := render(t, value)
+		if !strings.Contains(got, header+idLine) {
+			t.Errorf("output does not contain the device ID block:\n%s", got)
+		}
+		if strings.Contains(got, "EnrolledAt") {
+			t.Errorf("output must not contain EnrolledAt:\n%s", got)
+		}
+	})
+
+	t.Run("enrolled", func(t *testing.T) {
+		value, err := asn1.Marshal(struct {
+			DeviceID   string    `asn1:"printable"`
+			EnrolledAt time.Time `asn1:"generalized"`
+		}{deviceID, enrolledAt})
+		if err != nil {
+			t.Fatal(err)
+		}
+		got := render(t, value)
+		if !strings.Contains(got, header+idLine+timeLine) {
+			t.Errorf("output does not contain the enrolled block:\n%s", got)
+		}
+	})
+
+	t.Run("enrolled with a later appended field", func(t *testing.T) {
+		value, err := asn1.Marshal(struct {
+			DeviceID   string    `asn1:"printable"`
+			EnrolledAt time.Time `asn1:"generalized"`
+			Method     string    `asn1:"tag:0,optional,utf8"`
+		}{deviceID, enrolledAt, "agent"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		got := render(t, value)
+		if !strings.Contains(got, header+idLine+timeLine) {
+			t.Errorf("output does not contain the enrolled block:\n%s", got)
+		}
+	})
 }
